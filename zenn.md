@@ -1,3 +1,23 @@
+# 世の中に出回ってるテクを全部検証してやる！
+https://zenn.dev/mattak/articles/817ee679a6c080
+> なんか毎回忘れるのでメモ
+> ```bash
+> $ ffmpeg -i tmp.mp4 -vf 'scale=320:-1' tmp_small.mp4
+> ```
+> これでうまくいくこともあるのだけど、
+> 動画の縦の大きさが2で割り切れない場合に、下記のようなメッセージでうまく行かない。
+> ```bash
+> [libx264 @ 0x14000ee00] height not divisible by 2 (320x257)
+> ```
+> 端数を丸め込むとうまくいく.
+> (ow=original_width, a=aspect_ratio, 2で割って戻して、奇数を偶数化する)  
+  
+個人的にガツンときました。ほんとたまにうまくいかないので代替策やってたんですが、ズバリ直球で解決です。リスペクトします。今回の検証用コード全てに使わせて頂きました！  
+振り返って自分はどっかで覚えたなんちゃってコードを使ってました。正直に言います。使えればいいじゃんって。  
+でもそんなんでいいんですか？そんなの子供の頃になりたかった漢じゃない。  
+設定は詰めたのか？man pageちゃんと読んだのか？もっと高速化出来るんじゃないか？自分は本当に「できます」って言えるのか？  
+  
+はい。データとります。man読みます。ではどうぞ。
 # Best practice
 ```bash
 #!/bin/bash
@@ -13,7 +33,10 @@ find . -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | paralle
 convert *fs8.png -loop 0 output.gif
 rm *.png
 ```
-次点以降は後述。
+これが使うべきコードです。適宜ワンライナーにしたりシェルスクリプトのまま保存していつでも使って下さい。  
+　　
+代表的な自称ベストプラクティスを見ながら自分なりにチューンナップして全11種類にまとめました。  
+次点以降は後述します。まずはデータをご覧ください。
 # Performance table
 ## 処理時間とファイルサイズの関係
 |       | Time(mSec) | Size(MB) |
@@ -67,6 +90,7 @@ time { get_ELAPS; }; END=$END; ELAPS=START-END=$ELAPS; mv output.gif ${CASE}_${E
   - GNU parallel
 
 # case1
+いちばん目につくタイプ。画像の粗さがかえってノスタルジーな気分にさせる。
 ```bash
 ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" -loop 0 -y output.gif
 ```
@@ -75,6 +99,7 @@ ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:fl
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case1-1.png =600x)
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case1-2.png =600x)
 # case2
+世にベストプラクティスと喧伝されているもの。確かに画質が綺麗。出来るサイズが馬鹿でかい。時間ははやい。尺がある場合使用をためらうタイプ。
 - ffmpeg
   - palettegen
     - stats_mode=full(Default)
@@ -89,6 +114,7 @@ ffmpeg -threads 0 -t 5 -i "${FILE}" -lavfi "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case2-1.png =600x)
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case2-2.png =600x)
 # case3-1
+海外サイトでたまにお目にかかる。前景が動いてればstats_mode=diffだよね、と分かるくらいでないとそのまま使うのは難しい。その割にはbayer_scale=*1*だと画質は荒い。コストも凄く高い。実は実験用にわざとこうしました。1を5にすると良くなります。それがcase3-2。
 - ffmpeg
   - palettegen
     - stats_mode=diff
@@ -107,6 +133,7 @@ ffmpeg -threads 0 -t 5 -i $FILE -i palette.png -lavfi "fps=${FPS},scale=${WIDTH}
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case3-1-1.png =600x)
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case3-1-2.png =600x)
 # case3-2
+3-1との違いはbayer_scale値。けっこうなめらか。case3-1に比べ僅かにサイズが小さくなる。時間は同じ様に長い。凄く長い。
 - ffmpeg
   - palettegen
     - stats_mode=diff
@@ -125,6 +152,7 @@ ffmpeg -threads 0 -t 5 -i $FILE -i palette.png -lavfi "fps=${FPS},scale=${WIDTH}
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case3-2-1.png =600x)
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case3-2-2.png =600x)
 # case3-3
+こいつは駄目だ。うん、画質は良い方。しかし時間が長すぎる。サイズも大きい。今回の検証で一番コストが高かった。floyd_steinbergが選べたのでやってみたけれど、という感じ。
 - ffmpeg
   - palettegen
     - stats_mode=diff
@@ -141,6 +169,7 @@ ffmpeg -threads 0 -t 5 -i $FILE -i palette.png -lavfi "fps=${FPS},scale=${WIDTH}
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case3-3-1.png =600x)
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case3-3-2.png =600x)
 # case4-1
+サイズは今検証中最低ランク。時間もそこそこ短い。コストめっちゃ低い。しかし画質がなぁ…。これだったらcase1でもいいんじゃない？って思ってしまう。ちなみにGIF変換はこれがいいと思ってました（過去記事）。やっぱり手を動かしてやってみることだなぁ。
 - pngquant
   - quality=***0-5***
 ```bash
@@ -154,6 +183,7 @@ rm *.png
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-1-1.png =600x)
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-1-2.png =600x)
 # case4-2
+過去記事にも書いた通り、ここらへんは良いと思ってました。でもあとひとつ、って感じが否めないですね。速いしサイズも小さくてコストが低い。
 - pngquant
   - quality=***0-20***
 ```bash
@@ -167,6 +197,7 @@ rm *.png
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-2-1.png =600x)
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-2-2.png =600x)
 # case4-3
+これがBest practiceです。画質・サイズ・速度・コスト全てにおいて良いバランスです。ただし一時ファイルを大量に作るタイプなのでHDDの方は避けたほうが良いかも知れません。SSDなら心配いりません。
 - pngquant
   - quality=***0-40***
 ```bash
@@ -180,6 +211,7 @@ rm *.png
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-3-1.png =600x)
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-3-2.png =600x)
 # case4-4
+処理時間は全検証中真ん中くらい。画質は綺麗。サイズは大きめです。
 - pngquant
   - quality=***0-60***
 ```bash
@@ -193,6 +225,7 @@ rm *.png
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-4-1.png =600x)
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-4-2.png =600x)
 # case5
+convertコマンドにlayer optimizeをつけました。処理時間はそこそこ長い感じでサイズはバカでかくなります。コスト的にも大きい方です。
 - pngquant
   - quality=0-60
 - convert
@@ -208,6 +241,7 @@ rm *.png
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case5-1.png =600x)
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case5-2.png =600x)
 # case6
+ffmpegから直接convertにパイプでつなげています。処理速度は速い方ですがサイズが駄目ですね。でかすぎます。
 - Use pipeline
 - convert
   - layers optimize
@@ -256,12 +290,25 @@ gifsicle:5_START-END=10850.gif: warning: trivial adaptive palette (only 254 colo
 gifsicle:6_START-END=5330.gif: warning: trivial adaptive palette (only 255 colors in source)
 ```
 ## gifsicle適用前
+gifsicleを全てにかけてみましたが時間がかかるばかりで殆どサイズダウンはしませんでした。今回は使いみちがなさそうです。
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/no_gifsicle.jpg)
 ## gifsicle適用後
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/gifsicle.jpg)
+
+# 次点
+case4-4、その次がcase2でしょうか。case2はサイズが大きすぎるので使用用途に注意が必要です。
+```bash:case4-4
+ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" %04d.png 
+find . -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | parallel -0 pngquant --quality=0-60 {}
+convert *fs8.png -loop 0 output.gif
+rm *.png
+```
+```bash:case2
+ffmpeg -threads 0 -t 5 -i "${FILE}" -lavfi "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 -y output.gif
+```
   
 # Install
-```bash
+```bash:Ubuntu
 sudo install gifsicle parallel ffmpeg imagemagick pngquant pulseaudio-utils libnotify-bin
 ```
 # 全体のコード
@@ -389,16 +436,3 @@ https://github.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion
 http://www.gnu.org/software/parallel/parallel.html#EXAMPLE:-Working-as-xargs--n1.-Argument-appending
 ![ffmpegでaspect比を維持しつつ、縮小サイズの動画を書き出す](https://zenn.dev/mattak/articles/817ee679a6c080)
 https://zenn.dev/mattak/articles/817ee679a6c080
-> なんか毎回忘れるのでメモ
-> ```bash
-> $ ffmpeg -i tmp.mp4 -vf 'scale=320:-1' tmp_small.mp4
-> ```
-> これでうまくいくこともあるのだけど、
-> 動画の縦の大きさが2で割り切れない場合に、下記のようなメッセージでうまく行かない。
-> ```bash
-> [libx264 @ 0x14000ee00] height not divisible by 2 (320x257)
-> ```
-> 端数を丸め込むとうまくいく.
-> (ow=original_width, a=aspect_ratio, 2で割って戻して、奇数を偶数化する)  
-  
-個人的にはインパクトがありました。ほんとたまにうまくいかないので代替策やってたんですが、ズバリ直球で解決しちゃってます。リスペクトします。今回の検証用コード全てに使わせて頂きました！
