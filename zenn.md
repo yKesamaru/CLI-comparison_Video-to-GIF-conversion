@@ -72,6 +72,8 @@ ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:fl
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/1_START-END=1310.jpg =600x)
 *1秒310, 3.3 MB, 一部領域を拡大*
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case1-1.png =600x)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case1-2.png =600x)
 # case2
 - ffmpeg
   - palettegen
@@ -84,6 +86,8 @@ ffmpeg -threads 0 -t 5 -i "${FILE}" -lavfi "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/2_START-END=4310.jpg =600x)
 *4秒310, 7.2 MB, 一部領域を拡大*
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case2-1.png =600x)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case2-2.png =600x)
 # case3-1
 - ffmpeg
   - palettegen
@@ -100,6 +104,8 @@ ffmpeg -threads 0 -t 5 -i $FILE -i palette.png -lavfi "fps=${FPS},scale=${WIDTH}
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/3-1_START-END=13650.jpg =600x)
 *13秒650, 6.9 MB, 一部領域を拡大*
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case3-1-1.png =600x)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case3-1-2.png =600x)
 # case3-2
 - ffmpeg
   - palettegen
@@ -116,6 +122,8 @@ ffmpeg -threads 0 -t 5 -i $FILE -i palette.png -lavfi "fps=${FPS},scale=${WIDTH}
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/3-2_START-END=13940.jpg =600x)
 *13秒940, 6.2 MB, 一部領域を拡大*
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case3-2-1.png =600x)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case3-2-2.png =600x)
 # case3-3
 - ffmpeg
   - palettegen
@@ -130,6 +138,8 @@ ffmpeg -threads 0 -t 5 -i $FILE -i palette.png -lavfi "fps=${FPS},scale=${WIDTH}
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/3-3_START-END=14430.jpg =600x)
 *14秒430, 6.9 MB, 一部領域を拡大*
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case3-3-1.png =600x)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case3-3-2.png =600x)
 # case4-1
 - pngquant
   - quality=***0-5***
@@ -141,6 +151,8 @@ rm *.png
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/4-1_START-END=5580.jpg =600x)
 *5秒580, 3.5 MB, 一部領域を拡大*
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-1-1.png =600x)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-1-2.png =600x)
 # case4-2
 - pngquant
   - quality=***0-20***
@@ -152,6 +164,8 @@ rm *.png
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/4-2_START-END=6020.jpg =600x)
 *6秒020, 4.6 MB, 一部領域を拡大*
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-2-1.png =600x)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-2-2.png =600x)
 # case4-3
 - pngquant
   - quality=***0-40***
@@ -163,6 +177,8 @@ rm *.png
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/4-3_START-END=6260.jpg =600x)
 *6秒260, 5.3 MB, 一部領域を拡大*
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-3-1.png =600x)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-3-2.png =600x)
 # case4-4
 - pngquant
   - quality=***0-60***
@@ -174,6 +190,8 @@ rm *.png
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/4-4_START-END=7340.jpg =600x)
 *7秒340, 6.6 MB, 一部領域を拡大*
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-4-1.png =600x)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-4-2.png =600x)
 # case5
 - pngquant
   - quality=0-60
@@ -187,6 +205,8 @@ rm *.png
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/5_START-END=10850.jpg =600x)
 *10秒850, 7.8 MB, 一部領域を拡大*
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case5-1.png =600x)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case5-2.png =600x)
 # case6
 - Use pipeline
 - convert
@@ -196,6 +216,8 @@ ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:fl
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/6_START-END=5330.jpg =600x)
 *5秒330, 8.0 MB, 一部領域を拡大*
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case6-1.png =600x)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case6-2.png =600x)
   
 # GIF動画の見た目比較
 ## case1
