@@ -378,7 +378,6 @@ paplay "Positive.ogg"
 notify-send "動画GIF変換計測" "終了しました"
 ```
 # Reference
-https://life.craftz.dog/entry/generating-a-beautiful-gif-from-a-video-with-ffmpeg
 https://qiita.com/yoya/items/6bacfe84cd49237aea27
 https://qiita.com/yusuga/items/ba7b5c2cac3f2928f040
 https://nico-lab.net/optimized_256_colors_with_ffmpeg/
@@ -387,3 +386,19 @@ https://ffmpeg.org/ffmpeg-filters.html
 http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html
 https://github.com/kohler/gifsicle
 https://github.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion
+http://www.gnu.org/software/parallel/parallel.html#EXAMPLE:-Working-as-xargs--n1.-Argument-appending
+![ffmpegでaspect比を維持しつつ、縮小サイズの動画を書き出す](https://zenn.dev/mattak/articles/817ee679a6c080)
+https://zenn.dev/mattak/articles/817ee679a6c080
+> なんか毎回忘れるのでメモ
+> ```bash
+> $ ffmpeg -i tmp.mp4 -vf 'scale=320:-1' tmp_small.mp4
+> ```
+> これでうまくいくこともあるのだけど、
+> 動画の縦の大きさが2で割り切れない場合に、下記のようなメッセージでうまく行かない。
+> ```bash
+> [libx264 @ 0x14000ee00] height not divisible by 2 (320x257)
+> ```
+> 端数を丸め込むとうまくいく.
+> (ow=original_width, a=aspect_ratio, 2で割って戻して、奇数を偶数化する)  
+  
+個人的にはインパクトがありました。ほんとたまにうまくいかないので代替策やってたんですが、ズバリ直球で解決しちゃってます。リスペクトします。今回の検証用コード全てに使わせて頂きました！
