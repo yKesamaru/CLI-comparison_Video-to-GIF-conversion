@@ -13,6 +13,7 @@ find . -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | paralle
 convert *fs8.png -loop 0 output.gif
 rm *.png
 ```
+次点以降は後述。
 # Performance table
 ## 処理時間とファイルサイズの関係
 |       | Time(mSec) | Size(MB) |
@@ -29,6 +30,7 @@ rm *.png
 | case 5 | 10850 | 7.8 |
 | case 6 | 5330 | 8.0 |
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/time+size.jpg)  
+*数値が低いほうがbetter*
 ## 時間 x サイズ = コスト
 | | Cost (Time x Size) |
 | ---- | ---- |
@@ -43,7 +45,8 @@ rm *.png
 | case 4-4 | 48444 |
 | case 5 | 84630 |
 | case 6 | 42640 |
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/cost.jpg)　　
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/cost.jpg)　 
+*数値が低いほうがbetter。コストの低さと出来上がる画質を比べる必要がある。*
 
 # 計測方法
 10ミリ秒単位で計測。こちらを参考にさせて頂きました。  
@@ -57,7 +60,7 @@ set_START() { local dummy; read START dummy < /proc/uptime; }; get_ELAPS() { loc
 time { get_ELAPS; }; END=$END; ELAPS=START-END=$ELAPS; mv output.gif ${CASE}_${ELAPS}.gif;
 ```
 # 高速化
-全てに適応させた。
+共通。
 - ffmpeg
   - -threads 0
 - pngquant
@@ -70,18 +73,25 @@ ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:fl
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/1_START-END=1310.jpg =600x)
 *1秒310, 3.3 MB, 一部領域を拡大*
 # case2
+- ffmpeg
+  - palettegen
+    - stats_mode=full(Default)
+  - paletteuse
+    - dither=sierra2_4a(Default)
+    - diff_mode=none(Default)
 ```bash
 ffmpeg -threads 0 -t 5 -i "${FILE}" -lavfi "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 -y output.gif
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/2_START-END=4310.jpg =600x)
 *4秒310, 7.2 MB, 一部領域を拡大*
 # case3-1
-- palettegen
-  - stats_mode=diff
-- paletteuse
-  - dither=bayer
-  - bayer_scale=***1***
-  - :diff_mode=rectangle
+- ffmpeg
+  - palettegen
+    - stats_mode=diff
+  - paletteuse
+    - dither=bayer
+    - bayer_scale=***1***
+    - :diff_mode=rectangle
 ```bash
 ffmpeg -threads 0 -t 5 -i $FILE -vf "palettegen=stats_mode=diff" -y palette.png
 ffmpeg -threads 0 -t 5 -i $FILE -i palette.png -lavfi "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos [x]; [x][1:v]\
@@ -91,12 +101,13 @@ ffmpeg -threads 0 -t 5 -i $FILE -i palette.png -lavfi "fps=${FPS},scale=${WIDTH}
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/3-1_START-END=13650.jpg =600x)
 *13秒650, 6.9 MB, 一部領域を拡大*
 # case3-2
-- palettegen
-  - stats_mode=diff
-- paletteuse
-  - dither=bayer
-  - bayer_scale=***5***
-  - diff_mode=rectangle
+- ffmpeg
+  - palettegen
+    - stats_mode=diff
+  - paletteuse
+    - dither=bayer
+    - bayer_scale=***5***
+    - diff_mode=rectangle
 ```bash
 ffmpeg -threads 0 -t 5 -i $FILE -vf "palettegen=stats_mode=diff" -y palette.png
 ffmpeg -threads 0 -t 5 -i $FILE -i palette.png -lavfi "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos [x]; [x][1:v]\
@@ -106,10 +117,11 @@ ffmpeg -threads 0 -t 5 -i $FILE -i palette.png -lavfi "fps=${FPS},scale=${WIDTH}
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/3-2_START-END=13940.jpg =600x)
 *13秒940, 6.2 MB, 一部領域を拡大*
 # case3-3
-- palettegen
-  - stats_mode=diff
-- paletteuse
-  - dither=***floyd_steinberg***
+- ffmpeg
+  - palettegen
+    - stats_mode=diff
+  - paletteuse
+    - dither=***floyd_steinberg***
 ```bash
 ffmpeg -threads 0 -t 5 -i $FILE -vf "palettegen=stats_mode=diff" -y palette.png
 ffmpeg -threads 0 -t 5 -i $FILE -i palette.png -lavfi "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos [x]; [x][1:v]\
@@ -122,7 +134,7 @@ ffmpeg -threads 0 -t 5 -i $FILE -i palette.png -lavfi "fps=${FPS},scale=${WIDTH}
 - pngquant
   - quality=***0-5***
 ```bash
-ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2" %04d.png 
+ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" %04d.png 
 find . -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | parallel -0 pngquant --quality=0-5 {}
 convert *fs8.png -loop 0 output.gif
 rm *.png
@@ -133,7 +145,7 @@ rm *.png
 - pngquant
   - quality=***0-20***
 ```bash
-ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2" %04d.png 
+ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" %04d.png 
 find . -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | parallel -0 pngquant --quality=0-20 {}
 convert *fs8.png -loop 0 output.gif
 rm *.png
@@ -144,7 +156,7 @@ rm *.png
 - pngquant
   - quality=***0-40***
 ```bash
-ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2" %04d.png 
+ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" %04d.png 
 find . -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | parallel -0 pngquant --quality=0-40 {}
 convert *fs8.png -loop 0 output.gif
 rm *.png
@@ -155,7 +167,7 @@ rm *.png
 - pngquant
   - quality=***0-60***
 ```bash
-ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2" %04d.png 
+ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" %04d.png 
 find . -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | parallel -0 pngquant --quality=0-60 {}
 convert *fs8.png -loop 0 output.gif
 rm *.png
@@ -168,7 +180,7 @@ rm *.png
 - convert
   - layers optimize
 ```bash
-ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2" %04d.png 
+ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" %04d.png 
 find . -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | parallel -0 pngquant --quality=0-60 {}
 convert *fs8.png -loop 0 -layers optimize output.gif
 rm *.png
@@ -222,9 +234,9 @@ gifsicle:5_START-END=10850.gif: warning: trivial adaptive palette (only 254 colo
 gifsicle:6_START-END=5330.gif: warning: trivial adaptive palette (only 255 colors in source)
 ```
 ## gifsicle適用前
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/no_gifsicle.png)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/no_gifsicle.jpg)
 ## gifsicle適用後
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/gifsicle.png)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/gifsicle.jpg)
   
 # Install
 ```bash
@@ -343,3 +355,13 @@ convert ${CASE}_${ELAPS}.gif[0] gif:- | convert -crop 200x100+200+50 gif:- ${CAS
 paplay "Positive.ogg"
 notify-send "動画GIF変換計測" "終了しました"
 ```
+# Reference
+https://life.craftz.dog/entry/generating-a-beautiful-gif-from-a-video-with-ffmpeg
+https://qiita.com/yoya/items/6bacfe84cd49237aea27
+https://qiita.com/yusuga/items/ba7b5c2cac3f2928f040
+https://nico-lab.net/optimized_256_colors_with_ffmpeg/
+https://superuser.com/questions/556029/how-do-i-convert-a-video-to-gif-using-ffmpeg-with-reasonable-quality/556031#556031
+https://ffmpeg.org/ffmpeg-filters.html
+http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html
+https://github.com/kohler/gifsicle
+https://github.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion
