@@ -35,7 +35,16 @@ rm *.png
 | case 4-4 | 7340 | 6.6 |
 | case 5 | 10850 | 7.8 |
 | case 6 | 5330 | 8.0 |
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/time+size.jpg)  
+| GIFSICLE1-1 | 33560 | 5.6 |
+| GIFSICLE1-2 | 31980 | 5.7 |
+| GIFSICLE1-3 | 23070 | 10.6 |
+| GIFSICLE1-4 | 31060 | 7.1 |
+| GIFSICLE1-5 | 40040 | 7.3 |
+| GIFSICLE1-6 | 31570 | 7.1 |
+| GIFSICLE2-1 | 2280 | 3.3 |
+| GIFSICLE2-2 | 5860 | 5.2 |
+
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/time+size.jpg)  
 *数値が低いほうがbetter*
 ## 時間 x サイズ = コスト
 | | Cost (Time x Size) |
@@ -51,7 +60,7 @@ rm *.png
 | case 4-4 | 48444 |
 | case 5 | 84630 |
 | case 6 | 42640 |
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/cost.jpg)　 
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/cost.jpg)　 
 *数値が低いほうがbetter。コストの低さと出来上がる画質を比べる必要がある。*
 
 # 計測方法
@@ -77,10 +86,10 @@ time { get_ELAPS; }; END=$END; ELAPS=START-END=$ELAPS; mv output.gif ${CASE}_${E
 ```bash
 ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" -loop 0 -y output.gif
 ```
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/1_START-END=1310.jpg =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/1_START-END=1310.jpg =600x)  
 *1秒310, 3.3 MB, 一部領域を拡大*
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case1-1.png =600x)  
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case1-2.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case1-1.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case1-2.png =600x)  
 # case2
 基本形の発展型。画質が綺麗。出来るサイズがかなり大きい。時間ははやい。尺がある場合使用をためらうタイプ。
 - ffmpeg
@@ -92,10 +101,10 @@ ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:fl
 ```bash
 ffmpeg -threads 0 -t 5 -i "${FILE}" -lavfi "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 -y output.gif
 ```
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/2_START-END=4310.jpg =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/2_START-END=4310.jpg =600x)  
 *4秒310, 7.2 MB, 一部領域を拡大*
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case2-1.png =600x)  
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case2-2.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case2-1.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case2-2.png =600x)  
 # case3-1
 海外サイトでたまにお目にかかる。前景が動いてればstats_mode=diffだよね、と分かるくらいでないとそのまま使うのは難しい。その割にはbayer_scale=*1*だと画質は荒い。コストも凄く高い。実は実験用にわざとこうしました。1を5にすると良くなります。それがcase3-2。
 - ffmpeg
@@ -111,10 +120,10 @@ ffmpeg -threads 0 -t 5 -i $FILE -i palette.png -lavfi "fps=${FPS},scale=${WIDTH}
     paletteuse=dither=bayer:bayer_scale=1:diff_mode=rectangle"\
     -y -loop 0 output.gif
 ```
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/3-1_START-END=13650.jpg =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/3-1_START-END=13650.jpg =600x)  
 *13秒650, 6.9 MB, 一部領域を拡大*
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case3-1-1.png =600x)  
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case3-1-2.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case3-1-1.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case3-1-2.png =600x)  
 # case3-2
 3-1との違いはbayer_scale値。けっこうなめらか。case3-1に比べ僅かにサイズが小さくなる。時間は同じ様に長い。凄く長い。
 - ffmpeg
@@ -130,10 +139,10 @@ ffmpeg -threads 0 -t 5 -i $FILE -i palette.png -lavfi "fps=${FPS},scale=${WIDTH}
     paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle"\
     -y -loop 0 output.gif
 ```
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/3-2_START-END=13940.jpg =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/3-2_START-END=13940.jpg =600x)  
 *13秒940, 6.2 MB, 一部領域を拡大*
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case3-2-1.png =600x)  
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case3-2-2.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case3-2-1.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case3-2-2.png =600x)  
 # case3-3
 画質は良い方。しかし時間が長すぎる。サイズも大きい。今回の検証で一番コストが高かった。
 - ffmpeg
@@ -147,66 +156,70 @@ ffmpeg -threads 0 -t 5 -i $FILE -i palette.png -lavfi "fps=${FPS},scale=${WIDTH}
     paletteuse=dither=floyd_steinberg"\
     -y -loop 0 output.gif
 ```
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/3-3_START-END=14430.jpg =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/3-3_START-END=14430.jpg =600x)  
 *14秒430, 6.9 MB, 一部領域を拡大*
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case3-3-1.png =600x)  
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case3-3-2.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case3-3-1.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case3-3-2.png =600x)  
 # case4-1
 サイズは今検証中最低ランク。時間もそこそこ短い。コストめっちゃ低い。しかし画質が荒い。これだったらcase1でもいいんじゃない？って思ってしまう。ちなみにGIF変換はこれがいいと思ってました（過去記事）。
 - pngquant
   - quality=***0-5***
 ```bash
-ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" %04d.png 
-find . -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | parallel -0 pngquant --quality=0-5 {}
-convert *fs8.png -loop 0 output.gif
-rm *.png
+mkdir '.tmp'
+ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" .tmp/%04d.png 
+find .tmp/ -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | parallel -0 pngquant --quality=0-5 {}
+convert .tmp/*fs8.png -loop 0 output.gif
+rm .tmp/*.png
 ```
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/4-1_START-END=5580.jpg =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/4-1_START-END=5580.jpg =600x)  
 *5秒580, 3.5 MB, 一部領域を拡大*
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-1-1.png =600x)  
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-1-2.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case4-1-1.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case4-1-2.png =600x)  
 # case4-2
 過去記事にも書いた通り、ここらへんは良いと思ってました。でもあとひとつ、って感じが否めないですね。速いしサイズも小さくてコストが低い。
 - pngquant
   - quality=***0-20***
 ```bash
-ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" %04d.png 
-find . -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | parallel -0 pngquant --quality=0-20 {}
-convert *fs8.png -loop 0 output.gif
-rm *.png
+mkdir '.tmp'
+ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" .tmp/%04d.png 
+find .tmp/ -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | parallel -0 pngquant --quality=0-20 {}
+convert .tmp/*fs8.png -loop 0 output.gif
+rm .tmp/*.png
 ```
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/4-2_START-END=6020.jpg =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/4-2_START-END=6020.jpg =600x)  
 *6秒020, 4.6 MB, 一部領域を拡大*
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-2-1.png =600x)  
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-2-2.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case4-2-1.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case4-2-2.png =600x)  
 # case4-3
 これがBest practiceです。画質・サイズ・速度・コスト全てにおいて良いバランスです。ただし一時ファイルを大量に作るタイプなので***HDDの方***は避けたほうが良いかも知れません。
 - pngquant
   - quality=***0-40***
 ```bash
-ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" %04d.png 
-find . -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | parallel -0 pngquant --quality=0-40 {}
-convert *fs8.png -loop 0 output.gif
-rm *.png
+mkdir '.tmp'
+ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" .tmp/%04d.png 
+find .tmp/ -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | parallel -0 pngquant --quality=0-40 {}
+convert .tmp/*fs8.png -loop 0 output.gif
+rm .tmp/*.png
 ```
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/4-3_START-END=6260.jpg =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/4-3_START-END=6260.jpg =600x)  
 *6秒260, 5.3 MB, 一部領域を拡大*
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-3-1.png =600x)  
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-3-2.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case4-3-1.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case4-3-2.png =600x)  
 # case4-4
 処理時間は全検証中真ん中くらい。画質は綺麗。サイズは大きめです。
 - pngquant
   - quality=***0-60***
 ```bash
-ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" %04d.png 
-find . -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | parallel -0 pngquant --quality=0-60 {}
-convert *fs8.png -loop 0 output.gif
-rm *.png
+mkdir '.tmp'
+ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" .tmp/%04d.png 
+find .tmp/ -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | parallel -0 pngquant --quality=0-60 {}
+convert .tmp/*fs8.png -loop 0 output.gif
+rm .tmp/*.png
 ```
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/4-4_START-END=7340.jpg =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/4-4_START-END=7340.jpg =600x)  
 *7秒340, 6.6 MB, 一部領域を拡大*
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-4-1.png =600x)  
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case4-4-2.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case4-4-1.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case4-4-2.png =600x)  
 # case5
 convertコマンドにlayer optimizeをつけました。処理時間はそこそこ長い感じでサイズはかなり大きくなります。コスト的にも大きい方です。
 - pngquant
@@ -214,15 +227,16 @@ convertコマンドにlayer optimizeをつけました。処理時間はそこ�
 - convert
   - layers optimize
 ```bash
-ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" %04d.png 
-find . -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | parallel -0 pngquant --quality=0-60 {}
-convert *fs8.png -loop 0 -layers optimize output.gif
-rm *.png
+mkdir '.tmp'
+ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" .tmp/%04d.png 
+find .tmp/ -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | parallel -0 pngquant --quality=0-60 {}
+convert .tmp/*fs8.png -loop 0 -layers optimize output.gif
+rm .tmp/*.png
 ```
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/5_START-END=10850.jpg =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/5_START-END=10850.jpg =600x)  
 *10秒850, 7.8 MB, 一部領域を拡大*
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case5-1.png =600x)  
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case5-2.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case5-1.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case5-2.png =600x)  
 # case6
 ffmpegから直接convertにパイプでつなげています。処理速度は速い方ですがサイズが大きすぎます。
 - Use pipeline
@@ -231,34 +245,34 @@ ffmpegから直接convertにパイプでつなげています。処理速度は�
 ```bash
 ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" -c:v pam -f image2pipe - | convert -delay $((100 / ${FPS})) - -loop 0 -layers optimize output.gif
 ```
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/6_START-END=5330.jpg =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/6_START-END=5330.jpg =600x)  
 *5秒330, 8.0 MB, 一部領域を拡大*
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case6-1.png =600x)  
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/case6-2.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case6-1.png =600x)  
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case6-2.png =600x)  
   
 # GIF動画の見た目比較
 ## case1
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/1_START-END=1310.gif) 
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/1_START-END=1310.gif) 
 ## case2
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/2_START-END=4310.gif)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/2_START-END=4310.gif)
 ## case3-1
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/3-1_START-END=13650.gif)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/3-1_START-END=13650.gif)
 ## case3-2
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/3-2_START-END=13940.gif)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/3-2_START-END=13940.gif)
 ## case3-3
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/3-3_START-END=14430.gif)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/3-3_START-END=14430.gif)
 ## case4-1
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/4-1_START-END=5580.gif)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/4-1_START-END=5580.gif)
 ## case4-2
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/4-2_START-END=6020.gif)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/4-2_START-END=6020.gif)
 ## case4-3
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/4-3_START-END=6260.gif)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/4-3_START-END=6260.gif)
 ## case4-4
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/4-4_START-END=7340.gif)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/4-4_START-END=7340.gif)
 ## case5
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/5_START-END=10850.gif)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/5_START-END=10850.gif)
 ## case6
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/6_START-END=5330.gif)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/6_START-END=5330.gif)
 
 # Gifsicle
 Ubuntu18.04では1.91、Ubuntu20.04では1.92がUniverseリポジトリに登録されています。1.92ではオプション`--lossy`が使えるようになります。  
@@ -267,9 +281,9 @@ Ubuntu18.04では1.91、Ubuntu20.04では1.92がUniverseリポジトリに登録
 gifsicle --colors 256 --optimize=3 --batch -i *.gif
 ```
 ## gifsicle適用前
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/no_gifsicle.jpg)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/no_gifsicle.jpg)
 ## gifsicle適用後
-![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/gifsicle.jpg)
+![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/gifsicle.jpg)
 
 # 次点
 case4-4、その次がcase2でしょうか。case2はサイズが大きすぎるので使用用途に注意が必要です。
