@@ -6,6 +6,11 @@ WIDTH=600
 FILE="input.mp4"
 # ####################
 
+# FFmpeg threads type -------------
+# ffmpeg -threads 0 -thread_type frame -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" -f image2 .tmp/%04d.gif
+# ffmpeg -threads 0 -thread_type frame -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" -y .tmp/%04d.gif
+# ffmpeg -threads 0 -thread_type slice -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" -y .tmp/%04d.gif
+# ---------------------------------
 
 CASE="GIFSICLE1-1"
 set_START() { local dummy; read START dummy < /proc/uptime; }; get_ELAPS() { local dummy; read END dummy < /proc/uptime; let ELAPS=${END/./}0-${START/./}0; }; time { set_START; }; START=$START;
@@ -13,11 +18,13 @@ ffmpeg -threads 0 -t 5 -i "${FILE}" -pix_fmt rgb8 -f gif - | gifsicle --loopcoun
 time { get_ELAPS; }; END=$END; ELAPS=START-END=$ELAPS; mv output.gif ${CASE}_${ELAPS}.gif;
 convert ${CASE}_${ELAPS}.gif[0] gif:- | convert -crop 200x100+200+50 gif:- ${CASE}_${ELAPS}.jpg; unset dummy START END ELAPS START-END CASE;
 
+
 CASE="GIFSICLE1-2"
 set_START() { local dummy; read START dummy < /proc/uptime; }; get_ELAPS() { local dummy; read END dummy < /proc/uptime; let ELAPS=${END/./}0-${START/./}0; }; time { set_START; }; START=$START;
 ffmpeg -threads 0 -t 5 -i "${FILE}" -pix_fmt rgb8 -f gif - | gifsicle --loopcount=0 --resize-width ${WIDTH} --resize-method mix --optimize=2 > output.gif
 time { get_ELAPS; }; END=$END; ELAPS=START-END=$ELAPS; mv output.gif ${CASE}_${ELAPS}.gif;
 convert ${CASE}_${ELAPS}.gif[0] gif:- | convert -crop 200x100+200+50 gif:- ${CASE}_${ELAPS}.jpg; unset dummy START END ELAPS START-END CASE;
+
 
 CASE="GIFSICLE1-3"
 set_START() { local dummy; read START dummy < /proc/uptime; }; get_ELAPS() { local dummy; read END dummy < /proc/uptime; let ELAPS=${END/./}0-${START/./}0; }; time { set_START; }; START=$START;
@@ -25,11 +32,13 @@ ffmpeg -threads 0 -t 5 -i "${FILE}" -pix_fmt rgb8 -f gif - | gifsicle --loopcoun
 time { get_ELAPS; }; END=$END; ELAPS=START-END=$ELAPS; mv output.gif ${CASE}_${ELAPS}.gif;
 convert ${CASE}_${ELAPS}.gif[0] gif:- | convert -crop 200x100+200+50 gif:- ${CASE}_${ELAPS}.jpg; unset dummy START END ELAPS START-END CASE;
 
+
 CASE="GIFSICLE1-4"
 set_START() { local dummy; read START dummy < /proc/uptime; }; get_ELAPS() { local dummy; read END dummy < /proc/uptime; let ELAPS=${END/./}0-${START/./}0; }; time { set_START; }; START=$START;
 ffmpeg -threads 0 -t 5 -i "${FILE}" -pix_fmt rgb8 -f gif - | gifsicle --loopcount=0 --resize-width ${WIDTH} --resize-method box --optimize=1 > output.gif
 time { get_ELAPS; }; END=$END; ELAPS=START-END=$ELAPS; mv output.gif ${CASE}_${ELAPS}.gif;
 convert ${CASE}_${ELAPS}.gif[0] gif:- | convert -crop 200x100+200+50 gif:- ${CASE}_${ELAPS}.jpg; unset dummy START END ELAPS START-END CASE;
+
 
 CASE="GIFSICLE1-5"
 set_START() { local dummy; read START dummy < /proc/uptime; }; get_ELAPS() { local dummy; read END dummy < /proc/uptime; let ELAPS=${END/./}0-${START/./}0; }; time { set_START; }; START=$START;
@@ -37,11 +46,13 @@ ffmpeg -threads 0 -t 5 -i "${FILE}" -pix_fmt rgb8 -f gif - | gifsicle --loopcoun
 time { get_ELAPS; }; END=$END; ELAPS=START-END=$ELAPS; mv output.gif ${CASE}_${ELAPS}.gif;
 convert ${CASE}_${ELAPS}.gif[0] gif:- | convert -crop 200x100+200+50 gif:- ${CASE}_${ELAPS}.jpg; unset dummy START END ELAPS START-END CASE;
 
+
 CASE="GIFSICLE1-6"
 set_START() { local dummy; read START dummy < /proc/uptime; }; get_ELAPS() { local dummy; read END dummy < /proc/uptime; let ELAPS=${END/./}0-${START/./}0; }; time { set_START; }; START=$START;
 ffmpeg -threads 0 -t 5 -i "${FILE}" -pix_fmt rgb8 -f gif - | gifsicle --loopcount=0 --resize-width ${WIDTH} --resize-method mix --dither=floyd-steinberg --optimize=1 > output.gif
 time { get_ELAPS; }; END=$END; ELAPS=START-END=$ELAPS; mv output.gif ${CASE}_${ELAPS}.gif;
 convert ${CASE}_${ELAPS}.gif[0] gif:- | convert -crop 200x100+200+50 gif:- ${CASE}_${ELAPS}.jpg; unset dummy START END ELAPS START-END CASE;
+
 
 CASE="GIFSICLE2-1"
 set_START() { local dummy; read START dummy < /proc/uptime; }; get_ELAPS() { local dummy; read END dummy < /proc/uptime; let ELAPS=${END/./}0-${START/./}0; }; time { set_START; }; START=$START;
@@ -49,12 +60,26 @@ ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:fl
 time { get_ELAPS; }; END=$END; ELAPS=START-END=$ELAPS; mv output.gif ${CASE}_${ELAPS}.gif;
 convert ${CASE}_${ELAPS}.gif[0] gif:- | convert -crop 200x100+200+50 gif:- ${CASE}_${ELAPS}.jpg; unset dummy START END ELAPS START-END CASE;
 
+
 CASE="GIFSICLE2-2"
 set_START() { local dummy; read START dummy < /proc/uptime; }; get_ELAPS() { local dummy; read END dummy < /proc/uptime; let ELAPS=${END/./}0-${START/./}0; }; time { set_START; }; START=$START;
 ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -pix_fmt rgb8 -f gif - | gifsicle --loopcount=0 --optimize=3 > output.gif
 time { get_ELAPS; }; END=$END; ELAPS=START-END=$ELAPS; mv output.gif ${CASE}_${ELAPS}.gif;
 convert ${CASE}_${ELAPS}.gif[0] gif:- | convert -crop 200x100+200+50 gif:- ${CASE}_${ELAPS}.jpg; unset dummy START END ELAPS START-END CASE;
 
+
+# CASE="TEST1"
+# set_START() { local dummy; read START dummy < /proc/uptime; }; get_ELAPS() { local dummy; read END dummy < /proc/uptime; let ELAPS=${END/./}0-${START/./}0; }; time { set_START; }; START=$START;
+# ffmpeg -threads 0 -t 5 -i $FILE -vf "palettegen=stats_mode=diff" -y palette.png
+# ffmpeg -threads 0 -t 5 -i $FILE -i palette.png -lavfi "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos [x]; [x][1:v]\
+#     paletteuse=dither=bayer:bayer_scale=1:diff_mode=rectangle"\
+#     -y -loop 0 output.gif
+# gifsicle --loopcount=0 --optimize=3 output.gif
+# time { get_ELAPS; }; END=$END; ELAPS=START-END=$ELAPS; mv output.gif ${CASE}_${ELAPS}.gif; 
+# convert ${CASE}_${ELAPS}.gif[0] gif:- | convert -crop 200x100+200+50 gif:- ${CASE}_${ELAPS}.jpg; unset dummy START END ELAPS START-END CASE;
+
+
+# Gifsicle other options ------------------------------- <Gifsicle1.91のコストが高いため検証から除外>
 # ffmpeg -threads 0 -t 5 -i "${FILE}" -pix_fmt rgb8 -f gif - | gifsicle --loopcount=0 --resize-width ${WIDTH} --resize-method catrom 
 # ffmpeg -threads 0 -t 5 -i "${FILE}" -pix_fmt rgb8 -f gif - | gifsicle --loopcount=0 --resize-width ${WIDTH} --resize-method mitchell 
 # ffmpeg -threads 0 -t 5 -i "${FILE}" -pix_fmt rgb8 -f gif - | gifsicle --loopcount=0 --resize-width ${WIDTH} --resize-method mix --dither=ro64
@@ -66,7 +91,7 @@ convert ${CASE}_${ELAPS}.gif[0] gif:- | convert -crop 200x100+200+50 gif:- ${CAS
 # ffmpeg -threads 0 -t 5 -i "${FILE}" -pix_fmt rgb8 -f gif - | gifsicle --loopcount=0 --resize-width ${WIDTH} --resize-method mix --dither=diagonal
 # ffmpeg -threads 0 -t 5 -i "${FILE}" -pix_fmt rgb8 -f gif - | gifsicle --loopcount=0 --resize-width ${WIDTH} --resize-method mix --color-method blend-diversity
 # ffmpeg -threads 0 -t 5 -i "${FILE}" -pix_fmt rgb8 -f gif - | gifsicle --loopcount=0 --resize-width ${WIDTH} --resize-method mix --color-method median-cut
-
+# ------------------------------------------------------
 
 
 CASE="1"
@@ -74,6 +99,7 @@ set_START() { local dummy; read START dummy < /proc/uptime; }; get_ELAPS() { loc
 ffmpeg -threads 0 -t 5 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" -loop 0 -y output.gif
 time { get_ELAPS; }; END=$END; ELAPS=START-END=$ELAPS; mv output.gif ${CASE}_${ELAPS}.gif;
 convert ${CASE}_${ELAPS}.gif[0] gif:- | convert -crop 200x100+200+50 gif:- ${CASE}_${ELAPS}.jpg; unset dummy START END ELAPS START-END CASE;
+
 
 CASE="2"
 set_START() { local dummy; read START dummy < /proc/uptime; }; get_ELAPS() { local dummy; read END dummy < /proc/uptime; let ELAPS=${END/./}0-${START/./}0; }; time { set_START; }; START=$START;
@@ -121,6 +147,7 @@ convert .tmp/*fs8.png -loop 0 output.gif
 rm .tmp/*.png
 time { get_ELAPS; }; END=$END; ELAPS=START-END=$ELAPS; mv output.gif ${CASE}_${ELAPS}.gif;
 convert ${CASE}_${ELAPS}.gif[0] gif:- | convert -crop 200x100+200+50 gif:- ${CASE}_${ELAPS}.jpg; unset dummy START END ELAPS START-END CASE;
+
 
 CASE="4-2"
 set_START() { local dummy; read START dummy < /proc/uptime; }; get_ELAPS() { local dummy; read END dummy < /proc/uptime; let ELAPS=${END/./}0-${START/./}0; }; time { set_START; }; START=$START;
@@ -174,4 +201,4 @@ convert ${CASE}_${ELAPS}.gif[0] gif:- | convert -crop 200x100+200+50 gif:- ${CAS
 
 
 paplay "Positive.ogg"
-notify-send "アニメーションGIF計測" "終了しました"
+notify-send "Measurement test" "Done."
