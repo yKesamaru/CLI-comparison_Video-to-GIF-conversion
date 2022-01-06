@@ -1,7 +1,8 @@
 # 何のために行ったか
 動画からGIF変換の「速い・サイズが小さい・綺麗」を比較するために検証を行いました。  
 代表的な例を自分なりにチューンナップして全19種類のデータをとりましたので共有します。  
-:::details TOC
+  
+TOC
 - [何のために行ったか](#何のために行ったか)
 - [個人的なベストプラクティス](#個人的なベストプラクティス)
 - [Performance table](#performance-table)
@@ -39,7 +40,7 @@
 - [Install](#install)
 - [全体のコード](#全体のコード)
 - [Reference](#reference)
-:::
+  
 # 個人的なベストプラクティス
 先に速度・サイズ・画質共にバランスのとれていると結果がでたコードを載せておきます。  
 ```bash
@@ -382,7 +383,7 @@ sudo install gifsicle parallel ffmpeg imagemagick pngquant pulseaudio-utils libn
 ```
 https://github.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion
 # 全体のコード
-:::details code
+code  
 ```bash
 #!/bin/bash
 
@@ -584,7 +585,6 @@ convert ${CASE}_${ELAPS}.gif[0] gif:- | convert -crop 200x100+200+50 gif:- ${CAS
 paplay "Positive.ogg"
 notify-send "Measurement test" "Done."
 ```
-:::
 # Reference
 [ImageMagick で GIF 処理](https://qiita.com/yoya/items/6bacfe84cd49237aea27)  
 [ffmpegでとにかく綺麗なGIFを作りたい](https://qiita.com/yusuga/items/ba7b5c2cac3f2928f040)  
