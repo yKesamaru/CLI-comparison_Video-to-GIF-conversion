@@ -589,10 +589,10 @@ notify-send "Measurement test" "Done."
 [ImageMagick で GIF 処理](https://qiita.com/yoya/items/6bacfe84cd49237aea27)  
 [ffmpegでとにかく綺麗なGIFを作りたい](https://qiita.com/yusuga/items/ba7b5c2cac3f2928f040)  
 [ffmpeg で 256色を最適化する palettegen, paletteuse](https://nico-lab.net/optimized_256_colors_with_ffmpeg/)  
-[How do I convert a video to GIF using ffmpeg, with reasonable quality?](https://superuser.com/questions/556029/  how-do-i-convert-a-video-to-gif-using-ffmpeg-with-reasonable-quality/556031#556031)  
+[How do I convert a video to GIF using ffmpeg, with reasonable quality?](https://superuser.com/questions/556029/how-do-i-convert-a-video-to-gif-using-ffmpeg-with-reasonable-quality/556031#556031)  
 [FFmpeg Filters Documentation](https://ffmpeg.org/ffmpeg-filters.html)  
 [High quality GIF with FFmpeg](http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html)  
 [kohler/gifsicle](https://github.com/kohler/gifsicle)  
 [GNU parallel](http://www.gnu.org/software/parallel/parallel.html#EXAMPLE:-Working-as-xargs--n1.-Argument-appending)  
-FFmpegのリサイズで参考にさせて頂きました。
+FFmpegのリサイズで参考にさせて頂きました。  
 [ffmpegでaspect比を維持しつつ、縮小サイズの動画を書き出す](https://zenn.dev/mattak/articles/817ee679a6c080)  
