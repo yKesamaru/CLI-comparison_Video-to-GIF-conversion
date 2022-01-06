@@ -1,9 +1,10 @@
 # 何のために行ったか
 動画からGIF変換の「速い・サイズが小さい・綺麗」を比較するために検証を行いました。  
 代表的な例を自分なりにチューンナップして全19種類のデータをとりましたので共有します。  
+  
+なお汎用的なおすすめコードの紹介は主旨から外れますので触れません。  
 :::details TOC
 - [何のために行ったか](#何のために行ったか)
-- [個人的なベストプラクティス](#個人的なベストプラクティス)
 - [Performance table](#performance-table)
   - [処理時間とファイルサイズの関係](#処理時間とファイルサイズの関係)
   - [時間 x サイズ = コスト](#時間-x-サイズ--コスト)
@@ -34,31 +35,11 @@
   - [CASE4-4](#case4-4-1)
   - [CASE5](#case5-1)
   - [CASE6](#case6-1)
-- [次点と思われるもの](#次点と思われるもの)
 - [今後の改善点](#今後の改善点)
 - [Install](#install)
 - [全体のコード](#全体のコード)
 - [Reference](#reference)
 :::
-# 個人的なベストプラクティス
-先に速度・サイズ・画質共にバランスのとれていると結果がでたコードを載せておきます。  
-```bash
-#!/bin/bash
-
-# 初期設定 ###########
-FPS=10
-WIDTH=600
-FILE="input.mp4"
-# ####################
-
-mkdir '.tmp'
-ffmpeg -threads 0 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" .tmp/%04d.png 
-find .tmp/ -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | parallel -0 pngquant --quality=0-40 {}
-convert .tmp/*fs8.png -loop 0 output.gif
-rm -r '.tmp'
-```
-  
-個人的な次点以降は後述します。まずはデータをご覧ください。
 # Performance table
 ## 処理時間とファイルサイズの関係
 |       | Time(mSec) | Size(MB) |
@@ -181,7 +162,7 @@ ffmpeg -threads 0 -i "${FILE}" -lavfi "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flag
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case2-1.png =600x)  
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case2-2.png =600x)  
 ## CASE3-1
-`stats_mode=diff`は前景の動きが激しい場合に用います。`bayer_scale=*1*`だと画質は荒くコスト高い。実験用にわざとこうしました。
+`stats_mode=diff`は前景の動きが激しい場合に用います。`bayer_scale=*1*`だと画質は荒くコストは高い。実験用。
 - ffmpeg
   - palettegen
     - `stats_mode=diff`
@@ -251,7 +232,7 @@ rm -r '.tmp'
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case4-1-1.png =600x)  
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case4-1-2.png =600x)  
 ## CASE4-2
-過去記事にも書いた通り、ここらへんは良いと思ってました。速いしサイズも小さくてコストが低い。
+速いしサイズも小さくてコストが低い。
 - pngquant
   - `quality=0-20`
 ```bash
@@ -266,7 +247,7 @@ rm -r '.tmp'
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case4-2-1.png =600x)  
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case4-2-2.png =600x)  
 ## CASE4-3
-おすすめ。画質・サイズ・速度・コスト全てにおいて良いバランスです。  
+画質・サイズ・速度・コスト全てにおいて良いバランスです。  
 - pngquant
   - `quality=0-40`
 ```bash
@@ -350,26 +331,6 @@ ffmpeg -threads 0 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=l
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/6_START-END=5330.gif)
 
 
-# 次点と思われるもの
-case4-4、その次がcase2。case2はサイズが大きいので注意が必要です。
-```bash:case4-4
-#!/bin/bash
-
-# 初期設定 ###########
-FPS=10
-WIDTH=600
-FILE="input.mp4"
-# ####################
-
-mkdir '.tmp'
-ffmpeg -threads 0 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" .tmp/%04d.png 
-find .tmp/ -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | parallel -0 pngquant --quality=0-60 {}
-convert .tmp/*fs8.png -loop 0 output.gif
-rm .tmp/*.png
-```
-```bash:case2
-ffmpeg -threads 0 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 -y output.gif
-```
 
   
 # 今後の改善点
@@ -377,6 +338,7 @@ ffmpeg -threads 0 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=l
   
   
 # Install
+試されたい方はこちらからどうぞ。
 ```bash:Ubuntu
 sudo install gifsicle parallel ffmpeg imagemagick pngquant pulseaudio-utils libnotify-bin
 ```
@@ -596,3 +558,14 @@ https://github.com/kohler/gifsicle
 http://www.gnu.org/software/parallel/parallel.html#EXAMPLE:-Working-as-xargs--n1.-Argument-appending
 FFmpegのリサイズで参考にさせて頂きました。
 https://zenn.dev/mattak/articles/817ee679a6c080
+<!-- For Github
+[ImageMagick で GIF 処理](https://qiita.com/yoya/items/6bacfe84cd49237aea27)  
+[ffmpegでとにかく綺麗なGIFを作りたい](https://qiita.com/yusuga/items/ba7b5c2cac3f2928f040)  
+[ffmpeg で 256色を最適化する palettegen, paletteuse](https://nico-lab.net/optimized_256_colors_with_ffmpeg/)  
+[How do I convert a video to GIF using ffmpeg, with reasonable quality?](https://superuser.com/questions/556029/how-do-i-convert-a-video-to-gif-using-ffmpeg-with-reasonable-quality/556031#556031)  
+[FFmpeg Filters Documentation](https://ffmpeg.org/ffmpeg-filters.html)  
+[High quality GIF with FFmpeg](http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html)  
+[kohler/gifsicle](https://github.com/kohler/gifsicle)  
+[GNU parallel](http://www.gnu.org/software/parallel/parallel.html#EXAMPLE:-Working-as-xargs--n1.-Argument-appending)  
+FFmpegのリサイズで参考にさせて頂きました。  
+[ffmpegでaspect比を維持しつつ、縮小サイズの動画を書き出す](https://zenn.dev/mattak/articles/817ee679a6c080)   -->

@@ -2,9 +2,9 @@
 動画からGIF変換の「速い・サイズが小さい・綺麗」を比較するために検証を行いました。  
 代表的な例を自分なりにチューンナップして全19種類のデータをとりましたので共有します。  
   
-TOC
+なお汎用的なおすすめコードの紹介は主旨から外れますので触れません。  
+:::details TOC
 - [何のために行ったか](#何のために行ったか)
-- [個人的なベストプラクティス](#個人的なベストプラクティス)
 - [Performance table](#performance-table)
   - [処理時間とファイルサイズの関係](#処理時間とファイルサイズの関係)
   - [時間 x サイズ = コスト](#時間-x-サイズ--コスト)
@@ -35,31 +35,11 @@ TOC
   - [CASE4-4](#case4-4-1)
   - [CASE5](#case5-1)
   - [CASE6](#case6-1)
-- [次点と思われるもの](#次点と思われるもの)
 - [今後の改善点](#今後の改善点)
 - [Install](#install)
 - [全体のコード](#全体のコード)
 - [Reference](#reference)
-  
-# 個人的なベストプラクティス
-先に速度・サイズ・画質共にバランスのとれていると結果がでたコードを載せておきます。  
-```bash
-#!/bin/bash
-
-# 初期設定 ###########
-FPS=10
-WIDTH=600
-FILE="input.mp4"
-# ####################
-
-mkdir '.tmp'
-ffmpeg -threads 0 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" .tmp/%04d.png 
-find .tmp/ -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | parallel -0 pngquant --quality=0-40 {}
-convert .tmp/*fs8.png -loop 0 output.gif
-rm -r '.tmp'
-```
-  
-個人的な次点以降は後述します。まずはデータをご覧ください。
+:::
 # Performance table
 ## 処理時間とファイルサイズの関係
 |       | Time(mSec) | Size(MB) |
@@ -126,9 +106,9 @@ Gifsicle以外と比べて非常に成績が悪かったため^[Gifsicleの性�
 ```bash
 gifsicle --colors 256 --optimize=3 --batch -i *.gif
 ```
-- gifsicle適用前
+- gifsicle適用前  
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/no_gifsicle.jpg)
-- gifsicle適用後
+- gifsicle適用後  
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/gifsicle.jpg)  
   
 
@@ -163,7 +143,7 @@ time { get_ELAPS; }; END=$END; ELAPS=START-END=$ELAPS; mv output.gif ${CASE}_${E
 ffmpeg -threads 0 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" -loop 0 -y output.gif
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/1_START-END=1310.jpg)  
-*1秒310, 3.3 MB, 一部領域*
+*1秒310, 3.3 MB, 一部領域を拡大*
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case1-1.png)  
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case1-2.png)  
 ## CASE2
@@ -178,11 +158,11 @@ ffmpeg -threads 0 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=l
 ffmpeg -threads 0 -i "${FILE}" -lavfi "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 -y output.gif
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/2_START-END=4310.jpg)  
-*4秒310, 7.2 MB, 一部領域*
+*4秒310, 7.2 MB, 一部領域を拡大*
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case2-1.png)  
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case2-2.png)  
 ## CASE3-1
-`stats_mode=diff`は前景の動きが激しい場合に用います。`bayer_scale=*1*`だと画質は荒くコスト高い。実験用にわざとこうしました。
+`stats_mode=diff`は前景の動きが激しい場合に用います。`bayer_scale=*1*`だと画質は荒くコストは高い。実験用。
 - ffmpeg
   - palettegen
     - `stats_mode=diff`
@@ -197,7 +177,7 @@ ffmpeg -threads 0 -i $FILE -i palette.png -lavfi "fps=${FPS},scale=${WIDTH}:(ow/
     -y -loop 0 output.gif
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/3-1_START-END=13650.jpg)  
-*13秒650, 6.9 MB, 一部領域*
+*13秒650, 6.9 MB, 一部領域を拡大*
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case3-1-1.png)  
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case3-1-2.png)  
 ## CASE3-2
@@ -216,7 +196,7 @@ ffmpeg -threads 0 -i $FILE -i palette.png -lavfi "fps=${FPS},scale=${WIDTH}:(ow/
     -y -loop 0 output.gif
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/3-2_START-END=13940.jpg)  
-*13秒940, 6.2 MB, 一部領域*
+*13秒940, 6.2 MB, 一部領域を拡大*
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case3-2-1.png)  
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case3-2-2.png)  
 ## CASE3-3
@@ -233,7 +213,7 @@ ffmpeg -threads 0 -i $FILE -i palette.png -lavfi "fps=${FPS},scale=${WIDTH}:(ow/
     -y -loop 0 output.gif
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/3-3_START-END=14430.jpg)  
-*14秒430, 6.9 MB, 一部領域*
+*14秒430, 6.9 MB, 一部領域を拡大*
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case3-3-1.png)  
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case3-3-2.png)  
 ## CASE4-1
@@ -248,11 +228,11 @@ convert .tmp/*fs8.png -loop 0 output.gif
 rm -r '.tmp'
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/4-1_START-END=5580.jpg)  
-*5秒580, 3.5 MB, 一部領域*
+*5秒580, 3.5 MB, 一部領域を拡大*
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case4-1-1.png)  
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case4-1-2.png)  
 ## CASE4-2
-過去記事にも書いた通り、ここらへんは良いと思ってました。速いしサイズも小さくてコストが低い。
+速いしサイズも小さくてコストが低い。
 - pngquant
   - `quality=0-20`
 ```bash
@@ -263,11 +243,11 @@ convert .tmp/*fs8.png -loop 0 output.gif
 rm -r '.tmp'
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/4-2_START-END=6020.jpg)  
-*6秒020, 4.6 MB, 一部領域*
+*6秒020, 4.6 MB, 一部領域を拡大*
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case4-2-1.png)  
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case4-2-2.png)  
 ## CASE4-3
-おすすめ。画質・サイズ・速度・コスト全てにおいて良いバランスです。  
+画質・サイズ・速度・コスト全てにおいて良いバランスです。  
 - pngquant
   - `quality=0-40`
 ```bash
@@ -278,7 +258,7 @@ convert .tmp/*fs8.png -loop 0 output.gif
 rm -r '.tmp'
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/4-3_START-END=6260.jpg)  
-*6秒260, 5.3 MB, 一部領域*
+*6秒260, 5.3 MB, 一部領域を拡大*
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case4-3-1.png)  
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case4-3-2.png)  
 ## CASE4-4
@@ -293,7 +273,7 @@ convert .tmp/*fs8.png -loop 0 output.gif
 rm -r '.tmp'
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/4-4_START-END=7340.jpg)  
-*7秒340, 6.6 MB, 一部領域*
+*7秒340, 6.6 MB, 一部領域を拡大*
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case4-4-1.png)  
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case4-4-2.png)  
 ## CASE5
@@ -310,7 +290,7 @@ convert .tmp/*fs8.png -loop 0 -layers optimize output.gif
 rm -r '.tmp'
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/5_START-END=10850.jpg)  
-*10秒850, 7.8 MB, 一部領域*
+*10秒850, 7.8 MB, 一部領域を拡大*
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case5-1.png)  
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case5-2.png)  
 ## CASE6
@@ -321,7 +301,7 @@ rm -r '.tmp'
 ffmpeg -threads 0 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" -c:v pam -f image2pipe - | convert -delay $((100 / ${FPS})) - -loop 0 -layers optimize output.gif
 ```
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/6_START-END=5330.jpg)  
-*5秒330, 8.0 MB, 一部領域*
+*5秒330, 8.0 MB, 一部領域を拡大*
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case6-1.png)  
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/case6-2.png)  
   
@@ -351,26 +331,6 @@ ffmpeg -threads 0 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=l
 ![](https://raw.githubusercontent.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion/master/img/6_START-END=5330.gif)
 
 
-# 次点と思われるもの
-case4-4、その次がcase2。case2はサイズが大きいので注意が必要です。
-```bash:case4-4
-#!/bin/bash
-
-# 初期設定 ###########
-FPS=10
-WIDTH=600
-FILE="input.mp4"
-# ####################
-
-mkdir '.tmp'
-ffmpeg -threads 0 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos" .tmp/%04d.png 
-find .tmp/ -maxdepth 1 -type f -name '*.png' -not -name '*fs8.png' -print0 | parallel -0 pngquant --quality=0-60 {}
-convert .tmp/*fs8.png -loop 0 output.gif
-rm .tmp/*.png
-```
-```bash:case2
-ffmpeg -threads 0 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 -y output.gif
-```
 
   
 # 今後の改善点
@@ -378,12 +338,13 @@ ffmpeg -threads 0 -i "${FILE}" -vf "fps=${FPS},scale=${WIDTH}:(ow/a/2)*2:flags=l
   
   
 # Install
+試されたい方はこちらからどうぞ。
 ```bash:Ubuntu
 sudo install gifsicle parallel ffmpeg imagemagick pngquant pulseaudio-utils libnotify-bin
 ```
 https://github.com/yKesamaru/CLI-comparison_Video-to-GIF-conversion
 # 全体のコード
-code  
+:::details code
 ```bash
 #!/bin/bash
 
@@ -585,7 +546,19 @@ convert ${CASE}_${ELAPS}.gif[0] gif:- | convert -crop 200x100+200+50 gif:- ${CAS
 paplay "Positive.ogg"
 notify-send "Measurement test" "Done."
 ```
+:::
 # Reference
+<!-- https://qiita.com/yoya/items/6bacfe84cd49237aea27
+https://qiita.com/yusuga/items/ba7b5c2cac3f2928f040
+https://nico-lab.net/optimized_256_colors_with_ffmpeg/
+https://superuser.com/questions/556029/how-do-i-convert-a-video-to-gif-using-ffmpeg-with-reasonable-quality/556031#556031
+https://ffmpeg.org/ffmpeg-filters.html
+http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html
+https://github.com/kohler/gifsicle
+http://www.gnu.org/software/parallel/parallel.html#EXAMPLE:-Working-as-xargs--n1.-Argument-appending
+FFmpegのリサイズで参考にさせて頂きました。
+https://zenn.dev/mattak/articles/817ee679a6c080 -->
+For Github
 [ImageMagick で GIF 処理](https://qiita.com/yoya/items/6bacfe84cd49237aea27)  
 [ffmpegでとにかく綺麗なGIFを作りたい](https://qiita.com/yusuga/items/ba7b5c2cac3f2928f040)  
 [ffmpeg で 256色を最適化する palettegen, paletteuse](https://nico-lab.net/optimized_256_colors_with_ffmpeg/)  
